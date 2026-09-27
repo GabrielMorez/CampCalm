@@ -18,7 +18,7 @@ export class Space {
   readonly campingId: string;
   readonly name: string;
   readonly accommodationTypes: AccommodationType[];
-  readonly dimensions?: string;
+  readonly dimensions: string | undefined;
   readonly dailyRate: Money;
   private currentActive: boolean;
 
