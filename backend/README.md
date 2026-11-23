@@ -1,74 +1,43 @@
-# CampCalm Backend
+# Backend CampCalm
 
-Backend do CampCalm estruturado em TypeScript, com separação entre aplicação, domínio e infraestrutura.
+Backend do CampCalm estruturado em TypeScript com separação entre domínio, aplicação e infraestrutura.
 
 ## Requisitos
 
-- Node.js 20 ou superior
+- Node.js 24+ (conforme `package.json` e workflow atual)
 - npm
+- Docker Compose para o PostgreSQL/PostGIS local (veja `../database/README.md`)
 
-## Instalação
+## Instalação e comandos existentes
 
 ```bash
 cd backend
 npm install
+npm run dev
+npm run typecheck
+npm test
+npm run build
+npm start
 ```
 
-## Comandos
-
-```bash
-npm run dev        # executa o entry point em modo watch
-npm run typecheck  # valida os tipos sem gerar build
-npm test           # executa os testes com Vitest
-npm run build      # compila o TypeScript para dist/
-npm start          # executa o build compilado
-```
+**Importante:** `src/index.ts` atualmente exporta metadados/health status, mas **não cria um servidor HTTP**. Não existe API pública para publicar neste estágio.
 
 ## Organização
 
 ```text
 src/
-├── application/
-│   └── use-cases/
+├── application/use-cases/
 ├── domain/
 │   ├── entities/
 │   ├── errors/
 │   ├── repositories/
 │   └── value-objects/
-└── infrastructure/
-    └── repositories/
-
+└── infrastructure/repositories/
 tests/
-├── application/
-└── domain/
 ```
 
-### Domínio
+O domínio não depende de banco de dados nem de frameworks HTTP. Atualmente, `CreateReservationUseCase` valida camping/vaga e consulta conflitos antes de gravar uma reserva `PENDING`, utilizando um repositório em memória nos testes.
 
-O domínio contém entidades, objetos de valor, invariantes e contratos de repositório. Ele não depende de banco de dados, HTTP ou interface gráfica.
+## Etapa de banco de dados
 
-### Aplicação
-
-A camada de aplicação coordena os casos de uso. A primeira implementação é `CreateReservationUseCase`, responsável por validar camping, lote e conflitos antes de criar uma reserva pendente.
-
-### Infraestrutura
-
-A infraestrutura implementa os contratos declarados pelo domínio. Neste estágio existe um repositório de reservas em memória para permitir execução e testes das regras antes da adoção do PostgreSQL.
-
-## Estado atual
-
-Já estão implementados:
-
-- `Camper`;
-- `Camping`;
-- `Space`;
-- `Reservation`;
-- `Period`;
-- `Money`;
-- erros de domínio;
-- contratos de repositório;
-- repositório de reservas em memória;
-- criação de reserva com prevenção de conflito;
-- testes unitários iniciais.
-
-A persistência PostgreSQL/PostGIS e a API HTTP serão adicionadas em etapas posteriores.
+O esquema SQL foi acrescentado em `../database/migrations/001_initial_schema.sql`, com PostGIS e restrição de exclusão para conflitos. **Nenhum repositório PostgreSQL nem integração do caso de uso ao banco foi implementado nesta etapa.** O próximo passo será introduzir a conexão e transações mantendo as interfaces de domínio independentes.

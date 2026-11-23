@@ -1,7 +1,5 @@
-# Frontend
+# Frontend CampCalm
 
-Aplicação cliente do CampCalm.
+Tecnologia escolhida: **React + TypeScript + Vite + Capacitor**, com uma base web responsiva e empacotamento mobile.
 
-Nesta fase do projeto, este diretório reserva o espaço para a implementação da interface web/mobile em React + TypeScript.
-
-A implementação visual será iniciada após a consolidação do domínio e dos contratos entre as camadas, conforme definido na arquitetura do projeto.
+A estrutura ainda será iniciada após a configuração da persistência e da primeira versão da API HTTP. O frontend acessará o backend por HTTPS e nunca conectará diretamente ao PostgreSQL.

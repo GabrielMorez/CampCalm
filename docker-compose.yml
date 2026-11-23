@@ -1,0 +1,39 @@
+services:
+  db:
+    image: postgis/postgis:17-3.5
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DATABASE_NAME:-campcalm}
+      POSTGRES_USER: ${DATABASE_USER:-campcalm}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:?Copie .env.example para .env e configure DATABASE_PASSWORD}
+    ports:
+      - "127.0.0.1:${DATABASE_PORT:-5432}:5432"
+    volumes:
+      - campcalm_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", 'pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"']
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+
+  migrate:
+    image: postgres:17-alpine
+    profiles: ["tools"]
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PGHOST: db
+      PGPORT: "5432"
+      PGDATABASE: ${DATABASE_NAME:-campcalm}
+      PGUSER: ${DATABASE_USER:-campcalm}
+      PGPASSWORD: ${DATABASE_PASSWORD:?Copie .env.example para .env e configure DATABASE_PASSWORD}
+    volumes:
+      - ./database/migrations:/migrations:ro
+      - ./database/scripts:/scripts:ro
+    entrypoint: ["/bin/sh", "/scripts/migrate.sh"]
+    restart: "no"
+
+volumes:
+  campcalm_postgres_data:

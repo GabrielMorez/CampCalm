@@ -1,8 +1,8 @@
 # CampCalm
 
-O **CampCalm** é uma aplicação desenvolvida como projeto acadêmico do curso de Engenharia de Software da UNIASSELVI.
+Projeto acadêmico de Engenharia de Software — UNIASSELVI.
 
-O projeto tem como objetivo facilitar a localização de campings, a consulta de disponibilidade e a solicitação de reservas, centralizando informações que hoje costumam ser obtidas por redes sociais, mecanismos de busca e aplicativos de mensagens.
+O **CampCalm** pretende facilitar a localização de campings em operação, a consulta de disponibilidade e a solicitação de reservas, centralizando informações que costumam estar distribuídas entre redes sociais e aplicativos de mensagens.
 
 ## Objetivo
 
@@ -10,61 +10,40 @@ Permitir que um campista localize campings em operação dentro de um raio defin
 
 ## Escopo do MVP
 
-O MVP contempla:
-
 - Cadastro de perfil do campista;
 - Cadastro de camping, localização, vagas e valores;
 - Busca de campings por proximidade;
-- Consulta de vagas e datas disponíveis;
+- Consulta de vagas, datas disponíveis e valores;
 - Solicitação de reserva;
-- Aceite ou recusa da reserva pelo camping;
-- Consulta das reservas ativas pelo camping.
+- Aceite ou recusa manual pelo camping;
+- Consulta de reservas ativas pelo camping;
+- Cadastro/categorização de espaços por tipo de acomodação (barraca, motorhome ou trailer).
+
+O histórico do campista durante o aceite (RF-011) será implementado **após o MVP**. O cancelamento pelo campista (RF-013) também está fora do MVP.
 
 ## Arquitetura
 
-A aplicação será organizada nas seguintes camadas:
+- **Apresentação:** React + TypeScript + Vite + Capacitor (web e aplicativo mobile; ainda não implementado).
+- **Aplicação:** casos de uso do backend Node.js + TypeScript.
+- **Domínio:** entidades, objetos de valor, regras de negócio e interfaces independentes de infraestrutura.
+- **Infraestrutura:** PostgreSQL 17 com PostGIS em Docker para desenvolvimento, persistência real a implementar.
 
-- **Apresentação**
-- **Aplicação**
-- **Domínio**
-- **Infraestrutura**
-
-A camada de domínio concentra as regras de negócio e não possui dependência direta de banco de dados, interface gráfica ou serviços externos.
-
-## Estrutura do repositório
+## Estrutura
 
 ```text
-frontend/     Aplicação web/mobile
-backend/      API, domínio e regras de negócio
-docs/         Documentação acadêmica e técnica
-.github/      Configurações e templates do GitHub
+backend/          Domínio, aplicação e futura API
+frontend/         Aplicação web e mobile (a implementar)
+database/         Migrações SQL, consultas e testes de integridade
+docs/             Evidências e documentação de arquitetura
+.github/          CI e templates
 ```
 
-## Tecnologias previstas
+## Começar pelo banco
 
-### Frontend
+Veja **[database/README.md](database/README.md)** para criar o PostgreSQL/PostGIS e aplicar migrações usando Docker Compose, sem alterar o backend existente.
 
-- React
-- TypeScript
+## Estado atual
 
-### Backend
+A arquitetura de domínio e os testes unitários iniciais existem. O esquema PostgreSQL e o Compose estão preparados, mas a execução Docker, a API HTTP, as implementações Postgres dos repositórios e o frontend ainda precisam ser realizados/validados.
 
-- Node.js
-- TypeScript
-
-### Persistência
-
-- PostgreSQL
-- PostGIS para consultas geográficas, quando disponível
-
-## Status
-
-🚧 Projeto em desenvolvimento.
-
-Atualmente o projeto encontra-se nas etapas de definição arquitetural e implementação inicial do domínio.
-
-## Autor
-
-**Gabriel Morez dos Santos**
-
-Engenharia de Software — UNIASSELVI
+**Autor:** Gabriel Morez dos Santos — Engenharia de Software, UNIASSELVI.

@@ -17,15 +17,30 @@ export class Camping {
 
   constructor(props: CampingProps) {
     if (!props.name.trim()) {
-      throw new DomainValidationError("CAMPING_INVALID_NAME", "O nome do camping é obrigatório.");
+      throw new DomainValidationError(
+        "CAMPING_INVALID_NAME",
+        "O nome do camping é obrigatório.",
+      );
     }
-
-    if (props.latitude < -90 || props.latitude > 90) {
-      throw new DomainValidationError("CAMPING_INVALID_LATITUDE", "A latitude deve estar entre -90 e 90.");
+    if (
+      !Number.isFinite(props.latitude) ||
+      props.latitude < -90 ||
+      props.latitude > 90
+    ) {
+      throw new DomainValidationError(
+        "CAMPING_INVALID_LATITUDE",
+        "A latitude deve estar entre -90 e 90.",
+      );
     }
-
-    if (props.longitude < -180 || props.longitude > 180) {
-      throw new DomainValidationError("CAMPING_INVALID_LONGITUDE", "A longitude deve estar entre -180 e 180.");
+    if (
+      !Number.isFinite(props.longitude) ||
+      props.longitude < -90 ||
+      props.longitude > 90
+    ) {
+      throw new DomainValidationError(
+        "CAMPING_INVALID_LONGITUDE",
+        "A longitude deve estar entre -180 e 180.",
+      );
     }
 
     this.id = props.id;
