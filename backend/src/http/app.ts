@@ -10,6 +10,25 @@ import { PostgresAccountRegistrationRepository } from "../infrastructure/reposit
 
 import { Argon2PasswordHasher } from "../infrastructure/security/argon2-password-hasher.js";
 
+import fastifyJwt from "@fastify/jwt";
+import { AuthenticateUserUseCase } from "../application/use-cases/authenticate-user.js";
+import { PostgresUserRepository } from "../infrastructure/repositories/postgres-user-repository.js";
+import type { UserRepository } from "../domain/repositories/user-repository.js";
+import type { AccountAuthenticator } from "./routes/auth-routes.js";
+
+import { AuthSessionService } from "../application/services/auth-session-service.js";
+import { PostgresAuthSessionRepository } from "../infrastructure/repositories/postgres-auth-session-repository.js";
+import type { SessionManager } from "./routes/auth-routes.js";
+
+import { registerCampingRoutes } from "./routes/camping-routes.js";
+
+import { registerSpaceRoutes } from "./routes/space-routes.js";
+
+import { registerPublicReservationRoutes } from "./routes/public-reservation-routes.js";
+
+import { registerManageReservationRoutes } from
+  "./routes/manage-reservation-routes.js";
+
 import {
   registerAuthRoutes,
   type AccountRegistrar,
@@ -17,11 +36,45 @@ import {
 
 interface AppDependencies {
   accountRegistrar?: AccountRegistrar;
+  authenticator?: AccountAuthenticator;
+  userRepository?: UserRepository;
+  jwtSecret?: string;
+  sessions?: SessionManager;
 }
 
 export async function buildApp(dependencies: AppDependencies = {}) {
   const app = Fastify({
     logger: true,
+  });
+
+  const jwtSecret =
+    dependencies.jwtSecret ??
+    process.env.JWT_SECRET ??
+    (process.env.NODE_ENV === "test"
+      ? "campcalm-exclusivo-para-testes-automatizados-2026"
+      : undefined);
+
+  if (!jwtSecret || jwtSecret.length < 32) {
+    throw new Error(
+      "JWT_SECRET deve conter um segredo de pelo menos 32 caracteres.",
+    );
+  }
+
+  await app.register(fastifyJwt, {
+    secret: jwtSecret,
+
+    sign: {
+      algorithm: "HS256",
+      expiresIn: "15m",
+      iss: "campcalm",
+      aud: "campcalm-api",
+    },
+
+    verify: {
+      algorithms: ["HS256"],
+      allowedIss: "campcalm",
+      allowedAud: "campcalm-api",
+    },
   });
 
   const allowedOrigins = (
@@ -71,7 +124,28 @@ export async function buildApp(dependencies: AppDependencies = {}) {
       new Argon2PasswordHasher(),
     );
 
-  registerAuthRoutes(app, accountRegistrar);
+  const userRepository =
+    dependencies.userRepository ?? new PostgresUserRepository(pool);
+
+  const authenticator =
+    dependencies.authenticator ??
+    new AuthenticateUserUseCase(userRepository, new Argon2PasswordHasher());
+
+  const sessions =
+    dependencies.sessions ??
+    new AuthSessionService(new PostgresAuthSessionRepository(pool));
+
+  registerCampingRoutes(app, sessions, pool);
+  registerSpaceRoutes(app, sessions, pool);
+  registerPublicReservationRoutes(app, sessions, pool);
+  registerManageReservationRoutes(app, sessions, pool);
+  registerAuthRoutes(
+    app,
+    accountRegistrar,
+    authenticator,
+    userRepository,
+    sessions,
+  );
 
   return app;
 }

@@ -76,3 +76,21 @@ export class AccountEmailAlreadyExistsError extends Error {
     this.name = "AccountEmailAlreadyExistsError";
   }
 }
+
+export class InvalidCredentialsError extends Error {
+  readonly code = "INVALID_CREDENTIALS";
+
+  constructor() {
+    super("E-mail ou senha inválidos.");
+    this.name = "InvalidCredentialsError";
+  }
+}
+
+export class InvalidRefreshTokenError extends Error {
+  readonly code = "INVALID_REFRESH_TOKEN";
+
+  constructor() {
+    super("Sessão inválida ou expirada.");
+    this.name = "InvalidRefreshTokenError";
+  }
+}
