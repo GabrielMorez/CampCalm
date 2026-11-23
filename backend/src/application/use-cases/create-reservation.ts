@@ -1,9 +1,11 @@
 import { Reservation } from "../../domain/entities/reservation.js";
 import {
   CampingInactiveError,
+  CampingNotPublishedError,
   ReservationConflictError,
   SpaceUnavailableError,
 } from "../../domain/errors/domain-errors.js";
+
 import type { CampingRepository } from "../../domain/repositories/camping-repository.js";
 import type { ReservationRepository } from "../../domain/repositories/reservation-repository.js";
 import type { SpaceRepository } from "../../domain/repositories/space-repository.js";
@@ -29,6 +31,10 @@ export class CreateReservationUseCase {
 
     if (!camping || !camping.active) {
       throw new CampingInactiveError();
+    }
+
+    if (!camping.isPublished) {
+      throw new CampingNotPublishedError();
     }
 
     const space = await this.spaceRepository.findById(input.spaceId);

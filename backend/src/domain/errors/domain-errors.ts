@@ -58,3 +58,21 @@ export class CamperEmailAlreadyExistsError extends Error {
     this.name = "CamperEmailAlreadyExistsError";
   }
 }
+
+export class CampingNotPublishedError extends Error {
+  readonly code = "CAMPING_NOT_PUBLISHED";
+
+  constructor() {
+    super("O camping ainda não está disponível para reservas.");
+    this.name = "CampingNotPublishedError";
+  }
+}
+
+export class AccountEmailAlreadyExistsError extends Error {
+  readonly code = "ACCOUNT_EMAIL_ALREADY_EXISTS";
+
+  constructor() {
+    super("Este e-mail já está cadastrado.");
+    this.name = "AccountEmailAlreadyExistsError";
+  }
+}

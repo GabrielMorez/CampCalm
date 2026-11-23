@@ -1,9 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { CreateReservationUseCase } from "../../src/application/use-cases/create-reservation.js";
-import { Camping } from "../../src/domain/entities/camping.js";
+import {
+  Camping,
+  CampingPublicationStatus,
+} from "../../src/domain/entities/camping.js";
 import { Space } from "../../src/domain/entities/space.js";
 import {
   CampingInactiveError,
+  CampingNotPublishedError,
   ReservationConflictError,
 } from "../../src/domain/errors/domain-errors.js";
 import type { CampingRepository } from "../../src/domain/repositories/camping-repository.js";
@@ -47,13 +51,17 @@ function makePeriod() {
   );
 }
 
-function makeCamping(active = true) {
+function makeCamping(
+  active = true,
+  publicationStatus: CampingPublicationStatus = "APPROVED",
+) {
   return new Camping({
     id: "camping-1",
     name: "Camping Teste",
     latitude: -26.7,
     longitude: -49.3,
     active,
+    publicationStatus,
   });
 }
 
@@ -131,5 +139,23 @@ describe("CreateReservationUseCase", () => {
         period: makePeriod(),
       }),
     ).rejects.toBeInstanceOf(CampingInactiveError);
+  });
+
+  it("rejects reservations for a camping pending review", async () => {
+    const useCase = new CreateReservationUseCase(
+      new StubCampingRepository(makeCamping(true, "PENDING_REVIEW")),
+      new StubSpaceRepository(makeSpace()),
+      new InMemoryReservationRepository(),
+    );
+
+    await expect(
+      useCase.execute({
+        id: "reservation-pending",
+        camperId: "camper-1",
+        campingId: "camping-1",
+        spaceId: "space-1",
+        period: makePeriod(),
+      }),
+    ).rejects.toBeInstanceOf(CampingNotPublishedError);
   });
 });

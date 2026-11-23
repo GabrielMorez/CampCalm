@@ -4,7 +4,22 @@ import cors from "@fastify/cors";
 import { getHealthStatus } from "../index.js";
 import { pool } from "../infrastructure/database/postgres.js";
 
-export async function buildApp() {
+import { RegisterAccountUseCase } from "../application/use-cases/register-account.js";
+
+import { PostgresAccountRegistrationRepository } from "../infrastructure/repositories/postgres-account-registration-repository.js";
+
+import { Argon2PasswordHasher } from "../infrastructure/security/argon2-password-hasher.js";
+
+import {
+  registerAuthRoutes,
+  type AccountRegistrar,
+} from "./routes/auth-routes.js";
+
+interface AppDependencies {
+  accountRegistrar?: AccountRegistrar;
+}
+
+export async function buildApp(dependencies: AppDependencies = {}) {
   const app = Fastify({
     logger: true,
   });
@@ -48,6 +63,15 @@ export async function buildApp() {
       });
     }
   });
+
+  const accountRegistrar =
+    dependencies.accountRegistrar ??
+    new RegisterAccountUseCase(
+      new PostgresAccountRegistrationRepository(pool),
+      new Argon2PasswordHasher(),
+    );
+
+  registerAuthRoutes(app, accountRegistrar);
 
   return app;
 }

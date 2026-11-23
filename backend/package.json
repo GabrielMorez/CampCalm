@@ -16,7 +16,8 @@
     "test:watch": "vitest",
     "db:check": "tsx src/infrastructure/database/check-connection.ts",
     "test:integration": "tsx tests/integration/check-postgres.ts",
-    "test:integration:camping-space": "tsx tests/integration/check-camping-space.ts"
+    "test:integration:camping-space": "tsx tests/integration/check-camping-space.ts",
+    "test:integration:account": "tsx tests/integration/check-account.ts"
   },
   "devDependencies": {
     "@types/pg": "^8.23.1",

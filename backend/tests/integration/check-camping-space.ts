@@ -38,6 +38,7 @@ const campingAId = randomUUID();
 const campingBId = randomUUID();
 const campingCId = randomUUID();
 const camperId = randomUUID();
+const moderatorId = randomUUID();
 
 const spaceAId = randomUUID();
 const spaceBId = randomUUID();
@@ -76,6 +77,12 @@ async function cleanup(): Promise<void> {
   ]);
 
   await pool.query("DELETE FROM campers WHERE id = $1", [camperId]);
+
+  await pool.query("DELETE FROM platform_moderators WHERE user_id = $1", [
+    moderatorId,
+  ]);
+
+  await pool.query("DELETE FROM users WHERE id = $1", [moderatorId]);
 }
 
 async function runTests(): Promise<void> {
@@ -121,6 +128,49 @@ async function runTests(): Promise<void> {
     assert.equal(camping?.active, true);
 
     console.log("OK: cadastro e consulta de camping");
+
+    // Cadastra um moderador fictício para os testes.
+    await pool.query(
+      `
+      INSERT INTO users (id, email, password_hash)
+      VALUES ($1, $2, $3)
+      `,
+      [
+        moderatorId,
+        `${moderatorId}@example.test`,
+        "test-only-not-a-real-password-hash",
+      ],
+    );
+
+    await pool.query(
+      `
+      INSERT INTO platform_moderators (user_id)
+      VALUES ($1)
+      `,
+      [moderatorId],
+    );
+
+    // Confirma que os campings começam pendentes.
+    const pendingCamping = await campingRepository.findById(campingAId);
+
+    assert.equal(pendingCamping?.publicationStatus, "PENDING_REVIEW");
+
+    // Simula a aprovação administrativa no banco de testes.
+    // A autorização da operação será implementada na API.
+    await pool.query(
+      `
+      UPDATE campings
+      SET
+        publication_status = 'APPROVED',
+        reviewed_at = NOW(),
+        reviewed_by = $1,
+        review_note = NULL
+      WHERE id = ANY($2::uuid[])
+      `,
+      [moderatorId, [campingAId, campingBId]],
+    );
+
+    console.log("OK: aprovação dos campings de teste");
 
     // 2. Buscar campings próximos
     const nearby = await campingRepository.findNearby(-26.9, -49.23, 100);

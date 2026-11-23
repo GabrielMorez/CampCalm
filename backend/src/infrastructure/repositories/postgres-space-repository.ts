@@ -87,6 +87,7 @@ export class PostgresSpaceRepository implements SpaceRepository {
       WHERE s.camping_id = $1
         AND s.active = TRUE
         AND c.active = TRUE
+        AND c.publication_status = 'APPROVED'
         AND NOT EXISTS (
           SELECT 1
           FROM reservations r

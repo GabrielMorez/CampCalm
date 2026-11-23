@@ -1,6 +1,8 @@
 import type { Pool, PoolClient, QueryResultRow } from "pg";
-
-import { Camping } from "../../domain/entities/camping.js";
+import {
+  Camping,
+  type CampingPublicationStatus,
+} from "../../domain/entities/camping.js";
 import { DomainValidationError } from "../../domain/errors/domain-errors.js";
 import type { CampingRepository } from "../../domain/repositories/camping-repository.js";
 
@@ -10,6 +12,7 @@ interface CampingRow extends QueryResultRow {
   latitude: number;
   longitude: number;
   active: boolean;
+  publication_status: CampingPublicationStatus;
 }
 
 function toCamping(row: CampingRow): Camping {
@@ -19,6 +22,7 @@ function toCamping(row: CampingRow): Camping {
     latitude: row.latitude,
     longitude: row.longitude,
     active: row.active,
+    publicationStatus: row.publication_status,
   });
 }
 
@@ -28,7 +32,13 @@ export class PostgresCampingRepository implements CampingRepository {
   async findById(id: string): Promise<Camping | null> {
     const result = await this.db.query<CampingRow>(
       `
-      SELECT id, name, latitude, longitude, active
+      SELECT
+        id,
+        name,
+        latitude,
+        longitude,
+        active,
+        publication_status
       FROM campings
       WHERE id = $1
       `,
@@ -78,10 +88,12 @@ export class PostgresCampingRepository implements CampingRepository {
         c.name,
         c.latitude,
         c.longitude,
-        c.active
+        c.active,
+        c.publication_status
       FROM campings c
       CROSS JOIN origin
       WHERE c.active = TRUE
+        AND c.publication_status = 'APPROVED'
         AND ST_DWithin(
           c.location,
           origin.point,
