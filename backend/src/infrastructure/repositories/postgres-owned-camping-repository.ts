@@ -5,7 +5,11 @@ import type { Camping } from "../../domain/entities/camping.js";
 export class PostgresOwnedCampingRepository {
   constructor(private readonly pool: Pool) {}
 
-  async createOwned(camping: Camping, userId: string): Promise<boolean> {
+  async createOwned(
+    camping: Camping,
+    userId: string,
+    addressText: string,
+  ): Promise<boolean> {
     const client = await this.pool.connect();
 
     try {
@@ -31,15 +35,10 @@ export class PostgresOwnedCampingRepository {
       // O banco aplica PENDING_REVIEW automaticamente.
       await client.query(
         `
-        INSERT INTO campings (
-          id,
-          name,
-          latitude,
-          longitude
-        )
-        VALUES ($1, $2, $3, $4)
+        INSERT INTO campings (id, name, latitude, longitude, address_text)
+        VALUES ($1, $2, $3, $4, $5)
         `,
-        [camping.id, camping.name, camping.latitude, camping.longitude],
+        [camping.id, camping.name, camping.latitude, camping.longitude, camping.addressText],
       );
 
       // Vinculação automática do proprietário.
@@ -74,6 +73,7 @@ export class PostgresOwnedCampingRepository {
         c.name,
         c.active,
         c.publication_status AS "publicationStatus",
+        c.address_text AS "addressText",
         cu.role
       FROM camping_users cu
       INNER JOIN campings c

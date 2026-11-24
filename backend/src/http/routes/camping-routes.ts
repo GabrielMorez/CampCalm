@@ -15,6 +15,7 @@ const campingSchema = z
     name: z.string().trim().min(2).max(120),
     latitude: z.number().min(-90).max(90),
     longitude: z.number().min(-180).max(180),
+    addressText: z.string().trim().min(5).max(350),
   })
   .strict();
 
@@ -49,7 +50,11 @@ export function registerCampingRoutes(
       });
 
       try {
-        const created = await repository.createOwned(camping, request.user.sub);
+        const created = await repository.createOwned(
+          camping,
+          request.user.sub,
+          parsed.data.addressText,
+        );
 
         if (!created) {
           return reply.code(401).send({

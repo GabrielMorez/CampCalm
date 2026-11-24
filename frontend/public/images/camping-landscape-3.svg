@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 820" preserveAspectRatio="xMidYMid slice">
+ <defs>
+  <linearGradient id="sky" x1="0" y1="0" x2="0.2" y2="1"><stop stop-color="#b1cbc4"/><stop offset="1" stop-color="#668e91"/></linearGradient>
+  <linearGradient id="ground" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#456c70"/><stop offset="1" stop-color="#23494e"/></linearGradient>
+  <radialGradient id="glow"><stop stop-color="#ffe09b" stop-opacity=".62"/><stop offset="1" stop-color="#ffe09b" stop-opacity="0"/></radialGradient>
+ </defs>
+ <rect width="1600" height="820" fill="url(#sky)"/>
+ <circle cx="1190" cy="180" r="310" fill="url(#glow)"/><circle cx="1190" cy="180" r="82" fill="#ffe09b" opacity=".89"/>
+ <path d="M0 520 185 300 315 465 505 248 695 498 885 285 1040 490 1200 270 1430 495 1600 350V820H0Z" fill="#668e91" opacity=".72"/>
+ <path d="M0 586 210 440 392 564 570 380 735 540 918 405 1118 562 1370 385 1600 560V820H0Z" fill="#456c70" opacity=".83"/>
+ <path d="M0 655 185 553 388 635 580 535 800 658 1024 529 1288 620 1480 530 1600 640V820H0Z" fill="url(#ground)"/>
+ <path d="M0 675 Q300 620 600 677 T1200 681 T1600 673V820H0Z" fill="#23494e" opacity=".9"/>
+ <g fill="#23494e" opacity=".94">
+  <path d="m90 645 54-205 55 205h-28l-27-117-27 117Z"/><path d="m103 598 41-113 39 113Z"/>
+  <path d="m280 652 45-175 46 175h-27l-19-97-19 97Z"/><path d="m289 613 36-97 35 97Z"/>
+  <path d="m1360 637 56-225 59 225h-32l-27-132-26 132Z"/><path d="m1372 590 44-122 47 122Z"/>
+  <path d="m1464 640 43-173 45 173h-23l-22-98-20 98Z"/><path d="m1478 605 29-100 31 100Z"/>
+ </g>
+ <path d="M0 705 Q420 665 760 708 T1600 704V820H0Z" fill="#23494e" opacity=".66"/>
+ <g transform="translate(1020 505)">
+  <path d="M0 188 132 0 270 188Z" fill="#b98150"/><path d="M132 0 270 188 147 188Z" fill="#8f593b"/>
+  <path d="m125 93 71 95h-91Z" fill="#4a4737"/><path d="M0 188H270" stroke="#e2c09b" stroke-width="9" stroke-linecap="round"/>
+ </g>
+ <g opacity=".55" stroke="#f8e6be" fill="none" stroke-width="3"><path d="M520 715q140-33 280-3"/><path d="M450 744q185-25 345 0"/></g>
+</svg>

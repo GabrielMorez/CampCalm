@@ -105,6 +105,7 @@ export function registerPublicReservationRoutes(
         name: camping.name,
         latitude: camping.latitude,
         longitude: camping.longitude,
+        addressText: camping.addressText,
       }));
   });
 

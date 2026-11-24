@@ -13,6 +13,7 @@ interface CampingRow extends QueryResultRow {
   longitude: number;
   active: boolean;
   publication_status: CampingPublicationStatus;
+  address_text: string | null
 }
 
 function toCamping(row: CampingRow): Camping {
@@ -23,6 +24,7 @@ function toCamping(row: CampingRow): Camping {
     longitude: row.longitude,
     active: row.active,
     publicationStatus: row.publication_status,
+    addressText: row.address_text ?? null,
   });
 }
 
@@ -38,7 +40,8 @@ export class PostgresCampingRepository implements CampingRepository {
         latitude,
         longitude,
         active,
-        publication_status
+        publication_status,
+        address_text
       FROM campings
       WHERE id = $1
       `,
@@ -89,7 +92,8 @@ export class PostgresCampingRepository implements CampingRepository {
         c.latitude,
         c.longitude,
         c.active,
-        c.publication_status
+        c.publication_status,
+        c.address_text
       FROM campings c
       CROSS JOIN origin
       WHERE c.active = TRUE

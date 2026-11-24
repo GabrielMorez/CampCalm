@@ -34,6 +34,8 @@ import {
   type AccountRegistrar,
 } from "./routes/auth-routes.js";
 
+import { registerAddressRoutes } from './routes/address-routes.js';
+
 interface AppDependencies {
   accountRegistrar?: AccountRegistrar;
   authenticator?: AccountAuthenticator;
@@ -139,6 +141,7 @@ export async function buildApp(dependencies: AppDependencies = {}) {
   registerSpaceRoutes(app, sessions, pool);
   registerPublicReservationRoutes(app, sessions, pool);
   registerManageReservationRoutes(app, sessions, pool);
+  registerAddressRoutes(app, sessions, pool);
   registerAuthRoutes(
     app,
     accountRegistrar,

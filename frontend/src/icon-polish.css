@@ -1,0 +1,16 @@
+/* Ícones vetoriais discretos — somente painel do proprietário. */
+.owner-page .owned-icon svg, .owner-page .mini-space-icon svg, .owner-page .empty-icon svg { display: block; }
+.owner-page .owned-chevron { flex: 0 0 auto; color: #8ba294; }
+.owner-page .mini-space-icon { background: #eef3eb; border: 1px solid #e0e9dc; color: #406c50; }
+.owner-page .owned-icon { color: #3d7151; }
+.owner-page .address-confirmed, .owner-page .camping-address-subtitle {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+}
+.owner-page .address-confirmed svg, .owner-page .camping-address-subtitle svg {
+  flex: 0 0 auto;
+  margin-top: 1px;
+}
+.owner-page .selected-owner-head .button.subtle { display: inline-flex; align-items: center; gap: 7px; }
+.owner-page .decision-buttons .button svg, .owner-page .form-stack .button svg { flex-shrink: 0; }

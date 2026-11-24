@@ -13,6 +13,7 @@ export interface CampingProps {
   longitude: number;
   active?: boolean;
   publicationStatus?: CampingPublicationStatus;
+  addressText?: string | null;
 }
 
 export class Camping {
@@ -20,6 +21,7 @@ export class Camping {
   readonly name: string;
   readonly latitude: number;
   readonly longitude: number;
+  readonly addressText: string | null;
 
   private currentActive: boolean;
   private currentPublicationStatus: CampingPublicationStatus;
@@ -72,6 +74,7 @@ export class Camping {
     this.name = props.name.trim();
     this.latitude = props.latitude;
     this.longitude = props.longitude;
+    this.addressText = props.addressText ?? null;
 
     this.currentActive = props.active ?? true;
     this.currentPublicationStatus = publicationStatus;
