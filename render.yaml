@@ -1,0 +1,54 @@
+# CampCalm - demonstração acadêmica (Render Free)
+# Aplique este Blueprint somente após revisar o plano dos serviços.
+# As migrations devem ser executadas separadamente com scripts/deploy/migrate-render.ps1.
+services:
+  - type: web
+    name: campcalm-api-gabrielmorez
+    runtime: node
+    plan: free
+    region: oregon
+    rootDir: backend
+    buildCommand: npm ci --include=dev && npm run build
+    startCommand: npm start
+    healthCheckPath: /health
+    autoDeployTrigger: off
+    envVars:
+      - key: NODE_VERSION
+        value: "24.22.1"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: campcalm-db-gabrielmorez
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: GEOAPIFY_API_KEY
+        sync: false
+      - key: CORS_ORIGINS
+        fromService:
+          type: web
+          name: campcalm-web-gabrielmorez
+          envVarKey: RENDER_EXTERNAL_URL
+
+  - type: web
+    name: campcalm-web-gabrielmorez
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm ci && npm run build
+    staticPublishPath: dist
+    autoDeployTrigger: off
+    envVars:
+      - key: NODE_VERSION
+        value: "24.22.1"
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: campcalm-api-gabrielmorez
+          envVarKey: RENDER_EXTERNAL_URL
+
+databases:
+  - name: campcalm-db-gabrielmorez
+    plan: free
+    region: oregon
+    postgresMajorVersion: "17"
+    databaseName: campcalm
+    user: campcalm
